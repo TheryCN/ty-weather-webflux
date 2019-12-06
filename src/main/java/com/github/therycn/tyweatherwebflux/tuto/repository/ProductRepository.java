@@ -1,4 +1,4 @@
-package com.github.therycn.tyweatherwebflux.repository;
+package com.github.therycn.tyweatherwebflux.tuto.repository;
 
 import com.github.therycn.tyweatherwebflux.tuto.entity.Product;
 import org.reactivestreams.Publisher;

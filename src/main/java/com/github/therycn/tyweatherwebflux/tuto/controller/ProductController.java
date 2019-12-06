@@ -1,11 +1,12 @@
 package com.github.therycn.tyweatherwebflux.tuto.controller;
 
+import com.github.therycn.tyweatherwebflux.tuto.repository.ProductRepository;
 import com.github.therycn.tyweatherwebflux.tuto.entity.Product;
 import com.github.therycn.tyweatherwebflux.tuto.entity.ProductEvent;
-import com.github.therycn.tyweatherwebflux.repository.ProductRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -71,5 +72,11 @@ public class ProductController {
     public Flux<ProductEvent> getProductEvents() {
         return Flux.interval(Duration.ofSeconds(1))
                 .map(val -> new ProductEvent(val, "Product Event"));
+    }
+
+    @GetMapping(value = "/events2")
+    public Flux<ServerSentEvent<ProductEvent>> getProductEvents2() {
+        return Flux.interval(Duration.ofSeconds(1))
+                .map(val -> ServerSentEvent.<ProductEvent>builder().data(new ProductEvent(val, "Product Event")).build());
     }
 }
