@@ -48,18 +48,21 @@ public class DailyWeatherController {
 
     @GetMapping("/today")
     public Mono<ResponseEntity<DailyWeather>> getToday() {
-        Mono<ResponseEntity<DailyWeather>> dailyWeatherResponseEntityMono = openWeatherMapClient.getCurrentWeather()
-                .flatMap(this::map)
-                .flatMap(dailyWeather -> dailyWeatherService.save(dailyWeather))
-                .map(dailyWeather -> ResponseEntity.ok(dailyWeather))
-                .onErrorReturn(ResponseEntity.notFound().build());
-
         return dailyWeatherService.getToday()
                 .map(ResponseEntity::ok)
                 .onErrorResume(error -> {
                     log.warn("Daily weather not found", error);
-                    return dailyWeatherResponseEntityMono;
+                    return getDailyWeatherResponseEntityMono();
                 })
+                .log();
+    }
+
+    private Mono<ResponseEntity<DailyWeather>> getDailyWeatherResponseEntityMono() {
+        return openWeatherMapClient.getCurrentWeather()
+                .flatMap(this::map)
+                .flatMap(dailyWeather -> dailyWeatherService.save(dailyWeather))
+                .map(dailyWeather -> ResponseEntity.ok(dailyWeather))
+                .onErrorReturn(ResponseEntity.notFound().build())
                 .log();
     }
 
