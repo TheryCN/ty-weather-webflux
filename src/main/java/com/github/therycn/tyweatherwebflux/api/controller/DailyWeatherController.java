@@ -35,14 +35,14 @@ public class DailyWeatherController {
     @GetMapping("/{id}")
     public Mono<ResponseEntity<DailyWeather>> get(@PathVariable String id) {
         return dailyWeatherService.get(id)
-                .map(dailyWeather -> ResponseEntity.ok(dailyWeather))
+                .map(ResponseEntity::ok)
                 .onErrorReturn(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/todaydb")
     public Mono<ResponseEntity<DailyWeather>> getTodayDb() {
         return dailyWeatherService.getToday()
-                .map(dailyWeather -> ResponseEntity.ok(dailyWeather))
+                .map(ResponseEntity::ok)
                 .onErrorReturn(ResponseEntity.notFound().build());
     }
 
@@ -61,7 +61,7 @@ public class DailyWeatherController {
         return openWeatherMapClient.getCurrentWeather()
                 .flatMap(this::map)
                 .flatMap(dailyWeather -> dailyWeatherService.save(dailyWeather))
-                .map(dailyWeather -> ResponseEntity.ok(dailyWeather))
+                .map(ResponseEntity::ok)
                 .onErrorReturn(ResponseEntity.notFound().build())
                 .log();
     }
